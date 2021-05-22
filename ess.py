@@ -19,7 +19,7 @@ class EssApp(QWidget):
         self.curMd = ''
         self.curMdTextEdit = QTextEdit(self)
         self.curImageNoticeLabel = QLabel('현재 이미지 없음.',self)
-        self.curImageLabel = QLabel('현재 사진',self)
+        self.curImageLabel = QLabel(self)
         self.curImageTextEdit = QTextEdit(self)
         self.curImageDir = ''
         self.imageNoticeLabel = QLabel('이미지 보기',self)
@@ -63,41 +63,41 @@ class EssApp(QWidget):
         self.dirComboBox.addItem('None')
 
         # md파일 레이블
-        self.curMdLabel.setGeometry(250,150,250,30)
+        self.curMdLabel.setGeometry(250,180,250,30)
 
         # md파일명 변경 레이블
         mdEditLabel = QLabel('파일명 변경 : ',self)
-        mdEditLabel.setGeometry(250,180,80,30)
+        mdEditLabel.setGeometry(250,210,80,30)
 
         # md파일명 변경 편집창
-        self.curMdTextEdit.setGeometry(320,185,160,20)
+        self.curMdTextEdit.setGeometry(320,215,160,20)
 
         # md파일 위치이동 버튼 
         mdMoveBtn = QPushButton('md파일 이동', self)
-        mdMoveBtn.setGeometry(240,210,250,30)
+        mdMoveBtn.setGeometry(240,240,250,30)
         mdMoveBtn.setCheckable(False)
         mdMoveBtn.toggle() 
         mdMoveBtn.clicked.connect(self.moveMd)
 
         # 이미지 알림 레이블 
-        self.curImageNoticeLabel.setGeometry(250,240,250,30)
+        self.curImageNoticeLabel.setGeometry(250,350,250,30)
 
         # 이미지파일명 변경 레이블
         imageEditLabel = QLabel('파일명 변경 : ',self)
-        imageEditLabel.setGeometry(250,270,80,30)
+        imageEditLabel.setGeometry(250,380,80,30)
 
         # 이미지파일명 변경 편집창
-        self.curImageTextEdit.setGeometry(320,275,160,20)
+        self.curImageTextEdit.setGeometry(320,385,160,20)
 
         # 이미지파일 위치이동 버튼 
         imageMoveBtn = QPushButton('이미지파일 이동', self)
-        imageMoveBtn.setGeometry(240,300,250,30)
+        imageMoveBtn.setGeometry(240,410,250,30)
         imageMoveBtn.setCheckable(False)
         imageMoveBtn.toggle() 
         imageMoveBtn.clicked.connect(self.imageBtnClicked)
 
         # 현재 사진 레이블
-        self.curImageLabel.setGeometry(500,300,150,150)
+        self.curImageLabel.setGeometry(500,270,200,150)
 
         # 이미지 리스트 알림 레이블 
         self.imageNoticeLabel.move(500,60)
@@ -106,7 +106,7 @@ class EssApp(QWidget):
         self.imageList.setGeometry(500,90,200,170)
 
         self.setWindowTitle('ESS Program')
-        self.setGeometry(850, 100, 800, 500)
+        self.setGeometry(850, 100, 730, 460)
         self.show()
 
     #워크스페이스 선택 메서드
@@ -157,16 +157,16 @@ class EssApp(QWidget):
             self.curImageNoticeLabel.setText("현재 선택된 이미지 : "+self.curImages[0]+'.png')
             self.curImageTextEdit.setText(self.curImages[0])
             image = QPixmap(self.directory+'/'+self.curImageDir+'/'+self.curImages[0]+'.png')
-            image.scaledToHeight(150)
-            image.scaledToWidth(150)
+            image.scaled(150,150)
             self.curImageLabel.setPixmap(image) #image path
-            
+            self.curImageLabel.setScaledContents(True)
 
     def imageBtnClicked(self):
         if self.curImages:
             self.moveImage()
             self.popImage()
             self.setImage()
+            self.fixMdImageCode()
         else:
             print('옮길 이미지가 없습니다.')
 
