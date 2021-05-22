@@ -1,6 +1,7 @@
 import sys, os, zipfile, shutil
 from PyQt5.QtWidgets import QApplication, QTextEdit, QWidget, QPushButton, QFileDialog, QLabel, QTreeView, QFileSystemModel, QDirModel, QComboBox, QListWidget
 from PyQt5.QtGui import *
+from urllib import parse
 
 class EssApp(QWidget):
 
@@ -17,6 +18,7 @@ class EssApp(QWidget):
         self.exceptDirs = ['.git','venv']
         self.curMdLabel = QLabel('현재 md 파일 없음.',self)
         self.curMd = ''
+        self.curMdChangedUrl = ''
         self.curMdTextEdit = QTextEdit(self)
         self.curImageNoticeLabel = QLabel('현재 이미지 없음.',self)
         self.curImageLabel = QLabel(self)
@@ -148,7 +150,8 @@ class EssApp(QWidget):
                     
     
     def moveMd(self):
-        shutil.move(self.directory+'/'+self.curMd,self.directory+'/'+self.dirComboBox.currentText()+'/'+'image'+self.curMdTextEdit.toPlainText()+'.md')
+        self.curMdChangedUrl = self.directory+'/'+self.dirComboBox.currentText()+'/'+self.curMdTextEdit.toPlainText()+'.md'
+        shutil.move(self.directory+'/'+self.curMd,self.curMdChangedUrl)
         self.imageList.addItems(self.curImages)
         self.setImage()
         
@@ -163,10 +166,11 @@ class EssApp(QWidget):
 
     def imageBtnClicked(self):
         if self.curImages:
+            self.fixMdImageCode()
             self.moveImage()
             self.popImage()
             self.setImage()
-            self.fixMdImageCode()
+            
         else:
             print('옮길 이미지가 없습니다.')
 
@@ -179,7 +183,23 @@ class EssApp(QWidget):
         self.directory+'/'+self.dirComboBox.currentText()+'/image/'+self.curImageTextEdit.toPlainText()+'.png')
 
     def fixMdImageCode(self):
-        pass
+        #To do 
+        listOfFile = []
+        search_str = self.curImages[0]
+        print('md:'+self.curMdChangedUrl)
+        with open(self.curMdChangedUrl, 'rt') as f:
+            for line in f:
+                line = parse.unquote(line)
+                if line.find(search_str) != -1:
+                    print('find:', line)
+                    listOfFile.append('!['+self.curImageTextEdit.toPlainText()+']'+'('+'./image/'+self.curImageTextEdit     .toPlainText()+'.png'+')')
+                else:
+                    listOfFile.append(line.rstrip('\n'))
+    
+        with open(self.curMdChangedUrl, 'w') as f:
+            for line in listOfFile:
+                f.writelines("%s\n" % line)
+        
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
