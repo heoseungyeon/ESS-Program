@@ -189,7 +189,8 @@ class EssApp(QWidget):
         with open(self.curMdChangedUrl, 'rt') as f:
             for line in f:
                 line = parse.unquote(line)
-                if re.search(line,'!\[\w*\]\(\w*\/'+search_str+'\.png\)'):
+                #정규표현식으로 찾기
+                if re.search('!\[.*\]\(.*\/'+search_str+'\.png\)',line):
                     print('find:', line)
                     listOfFile.append('!['+self.curImageTextEdit.toPlainText()+']'+'('+'./image/'+self.curImageTextEdit     .toPlainText()+'.png'+')')
                 else:
