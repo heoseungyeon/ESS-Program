@@ -2,7 +2,7 @@ import sys, os, zipfile, shutil
 from PyQt5.QtWidgets import QApplication, QTextEdit, QWidget, QPushButton, QFileDialog, QLabel, QTreeView, QFileSystemModel, QDirModel, QComboBox, QListWidget
 from PyQt5.QtGui import *
 from urllib import parse
-
+import re
 class EssApp(QWidget):
 
     def __init__(self):
@@ -183,19 +183,18 @@ class EssApp(QWidget):
         self.directory+'/'+self.dirComboBox.currentText()+'/image/'+self.curImageTextEdit.toPlainText()+'.png')
 
     def fixMdImageCode(self):
-        #To do 
         listOfFile = []
         search_str = self.curImages[0]
-        print('md:'+self.curMdChangedUrl)
+        # 문자열 찾고 치환
         with open(self.curMdChangedUrl, 'rt') as f:
             for line in f:
                 line = parse.unquote(line)
-                if line.find(search_str) != -1:
+                if re.search(line,'!\[\w*\]\(\w*\/'+search_str+'\.png\)'):
                     print('find:', line)
                     listOfFile.append('!['+self.curImageTextEdit.toPlainText()+']'+'('+'./image/'+self.curImageTextEdit     .toPlainText()+'.png'+')')
                 else:
                     listOfFile.append(line.rstrip('\n'))
-    
+        # 치환된 파일로 파일 수정 
         with open(self.curMdChangedUrl, 'w') as f:
             for line in listOfFile:
                 f.writelines("%s\n" % line)
