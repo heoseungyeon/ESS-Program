@@ -3,6 +3,10 @@ from PyQt5.QtWidgets import QApplication, QTextEdit, QWidget, QPushButton, QFile
 from PyQt5.QtGui import *
 from urllib import parse
 import re
+
+# 실행파일 만들기 
+# pyinstaller -w -F ess.py
+
 class EssApp(QWidget):
 
     def __init__(self):
@@ -167,6 +171,7 @@ class EssApp(QWidget):
     def imageBtnClicked(self):
         if self.curImages:
             self.fixMdImageCode()
+            self.makeDirectory(self.directory+'/'+self.dirComboBox.currentText()+'/image')
             self.moveImage()
             self.popImage()
             self.setImage()
@@ -177,6 +182,13 @@ class EssApp(QWidget):
     def popImage(self):
         self.curImages.pop(0)
         self.imageList.takeItem(0)
+
+    def makeDirectory(self,path):
+        try:
+            if not(os.path.isdir(path)):
+                os.makedirs(os.path.join(path))
+        except OSError as e:
+            print("Error: Cannot create the directory {}".format(path))
         
     def moveImage(self):
         shutil.move(self.directory+'/'+self.curImageDir+'/'+self.curImages[0]+'.png',
