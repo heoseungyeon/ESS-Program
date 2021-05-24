@@ -19,7 +19,7 @@ class EssApp(QWidget):
         self.dirComboBox = QComboBox(self)
         self.dirLabel = QLabel('하위 디렉터리 : ',self)
         self.curDirs = []
-        self.exceptDirs = ['.git','venv']
+        self.exceptDirs = ['.git','venv','.DS_Store','.gitignore','.zip']
         self.curMdLabel = QLabel('현재 md 파일 없음.',self)
         self.curMd = ''
         self.curMdChangedUrl = ''
@@ -119,8 +119,11 @@ class EssApp(QWidget):
     def openDirectory(self):
         #디렉터리 선택 
         self.directory = QFileDialog.getExistingDirectory(self, "Select Directory")
+        dirs = []
+        for dir_name in os.listdir(self.directory):
+            dirs.append(self.directory+'/'+dir_name)
         #하위 디렉터리 추출 
-        for dir in filter(os.path.isdir, os.listdir(os.getcwd())):
+        for dir in filter(os.path.isdir,dirs):
             if dir not in self.exceptDirs:
                 self.curDirs.append(dir)
         # 디렉터리 콤보박스 갱신
@@ -139,7 +142,7 @@ class EssApp(QWidget):
             self.curZipLabel.setText('선택된 압축파일 : '+filename.split('/')[-1])
             extractall_path = path
             with zipfile.ZipFile(extractall_path) as zip:
-                zip_path = zip.extractall()
+                zip_path = zip.extractall(path=self.directory)
             # zip 파일 안에 파일 list을 출력
                 for info in zip.infolist():
                     if '.md' in info.filename:
@@ -154,7 +157,7 @@ class EssApp(QWidget):
                     
     
     def moveMd(self):
-        self.curMdChangedUrl = self.directory+'/'+self.dirComboBox.currentText()+'/'+self.curMdTextEdit.toPlainText()+'.md'
+        self.curMdChangedUrl = self.dirComboBox.currentText()+'/'+self.curMdTextEdit.toPlainText()+'.md'
         shutil.move(self.directory+'/'+self.curMd,self.curMdChangedUrl)
         self.imageList.addItems(self.curImages)
         self.setImage()
@@ -167,11 +170,14 @@ class EssApp(QWidget):
             image.scaled(150,150)
             self.curImageLabel.setPixmap(image) #image path
             self.curImageLabel.setScaledContents(True)
+        else:
+            os.rmdir(self.directory+'/'+self.curImageDir)
+
 
     def imageBtnClicked(self):
         if self.curImages:
             self.fixMdImageCode()
-            self.makeDirectory(self.directory+'/'+self.dirComboBox.currentText()+'/image')
+            self.makeDirectory(self.dirComboBox.currentText()+'/image')
             self.moveImage()
             self.popImage()
             self.setImage()
@@ -192,7 +198,7 @@ class EssApp(QWidget):
         
     def moveImage(self):
         shutil.move(self.directory+'/'+self.curImageDir+'/'+self.curImages[0]+'.png',
-        self.directory+'/'+self.dirComboBox.currentText()+'/image/'+self.curImageTextEdit.toPlainText()+'.png')
+        self.dirComboBox.currentText()+'/image/'+self.curImageTextEdit.toPlainText()+'.png')
 
     def fixMdImageCode(self):
         listOfFile = []
