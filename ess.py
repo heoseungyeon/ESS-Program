@@ -122,6 +122,7 @@ class EssApp(QWidget):
         dirs = []
         for dir_name in os.listdir(self.directory):
             dirs.append(self.directory+'/'+dir_name)
+        self.curDirs.clear()
         #하위 디렉터리 추출 
         for dir in filter(os.path.isdir,dirs):
             if dir not in self.exceptDirs:
@@ -154,8 +155,6 @@ class EssApp(QWidget):
                         self.curImageDir = os.path.dirname(info.filename)
                         self.curImages.append(info.filename.split('/')[-1][:-4])
                 
-                    
-    
     def moveMd(self):
         self.curMdChangedUrl = self.dirComboBox.currentText()+'/'+self.curMdTextEdit.toPlainText()+'.md'
         shutil.move(self.directory+'/'+self.curMd,self.curMdChangedUrl)
@@ -176,14 +175,15 @@ class EssApp(QWidget):
 
     def imageBtnClicked(self):
         if self.curImages:
-            self.fixMdImageCode()
-            self.makeDirectory(self.dirComboBox.currentText()+'/image')
-            self.moveImage()
-            self.popImage()
-            self.setImage()
+                self.fixMdImageCode()
+                self.makeDirectory(self.dirComboBox.currentText()+'/image')
+                self.moveImage()
+                self.popImage()
+                self.setImage()
             
         else:
-            print('옮길 이미지가 없습니다.')
+            #print('옮길 이미지가 없습니다.')
+            pass
 
     def popImage(self):
         self.curImages.pop(0)
@@ -194,7 +194,8 @@ class EssApp(QWidget):
             if not(os.path.isdir(path)):
                 os.makedirs(os.path.join(path))
         except OSError as e:
-            print("Error: Cannot create the directory {}".format(path))
+            #print("Error: Cannot create the directory {}".format(path))
+            pass
         
     def moveImage(self):
         shutil.move(self.directory+'/'+self.curImageDir+'/'+self.curImages[0]+'.png',
@@ -206,10 +207,10 @@ class EssApp(QWidget):
         # 문자열 찾고 치환
         with open(self.curMdChangedUrl, 'rt') as f:
             for line in f:
-                line = parse.unquote(line)
+                line = parse.unquote(line)                
                 #정규표현식으로 찾기
                 if re.search('!\[.*\]\(.*\/'+search_str+'\.png\)',line):
-                    print('find:', line)
+                    #print('find:', line)
                     listOfFile.append('!['+self.curImageTextEdit.toPlainText()+']'+'('+'./image/'+self.curImageTextEdit     .toPlainText()+'.png'+')')
                 else:
                     listOfFile.append(line.rstrip('\n'))
