@@ -4,11 +4,11 @@ Easy Start Study(쉽게 스터디를 하게 해주는 프로그램)
 
 [Notion export 이미지 처리 프로그램 만들기](https://www.notion.so/Notion-export-e4a70e26bf254886b8ee1c348e34b9a2)
 
-# ❓프로그램 메뉴얼❗
+# 🤼 프로그램 메뉴얼
 
 ## 1) Notion 내보내기
 
-### ❗주의❗→ 저장위치는 선택할 워크스페이스 폴더
+<주의❗저장위치는 선택할 워크스페이스 폴더>
 
 ![1](./image/1.png)
 
